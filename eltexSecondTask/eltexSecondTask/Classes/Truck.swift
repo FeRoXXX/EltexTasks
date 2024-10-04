@@ -13,7 +13,7 @@ final class Truck: Vehicle {
     var trailerTypes: [CargoType]?
     var trailerCurrentLoad: Int?
     
-    init(make: String, model: String, year: Int, capacity: Int, trailerAttached: Bool, trailerCapacity: Int?, trailerTypes: [CargoType]? = nil) {
+    init(make: String, model: String, year: Int, capacity: Int, trailerAttached: Bool, trailerCapacity: Int?, trailerTypes: [CargoType]? = nil, tankCapacity: Int, consumption: Int) {
         self.trailerAttached = trailerAttached
         if trailerAttached {
             self.trailerCapacity = trailerCapacity
@@ -22,7 +22,7 @@ final class Truck: Vehicle {
             print("Грузоподъемность трейлера не может существовать без трейлера")
         }
         self.trailerTypes = trailerTypes
-        super.init(make: make, model: model, year: year, capacity: capacity)
+        super.init(make: make, model: model, year: year, capacity: capacity, tankCapacity: tankCapacity, consumption: consumption)
         self.generalCapacity += self.trailerCapacity ?? 0
         print("Грузовик создан")
     }
@@ -42,5 +42,21 @@ final class Truck: Vehicle {
                 print(loadResult.message)
             }
         }
+    }
+    
+    override func checkWay(cargo: Cargo, path: Int) -> Bool {
+        if super.checkWay(cargo: cargo, path: path) {
+            return true
+        }
+        
+        let remainingFuel = ((Double(path) / 100) * Double(consumption)) * 2
+        
+        if Double(tankCapacity) < remainingFuel {
+            return false
+        }
+        
+        let result = load(trailerCurrentLoad, types, cargo, trailerCapacity)
+        
+        return result.result
     }
 }

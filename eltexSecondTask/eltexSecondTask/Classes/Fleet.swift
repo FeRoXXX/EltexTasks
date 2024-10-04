@@ -32,6 +32,10 @@ final class Fleet {
         return result
     }
     
+    func canGo(cargo: [Cargo], path: Int) {
+        
+    }
+    
     func info() {
         print(
                 """

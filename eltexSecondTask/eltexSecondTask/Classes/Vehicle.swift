@@ -14,11 +14,13 @@ class Vehicle {
     let year: Int
     let capacity: Int
     let types: [CargoType]?
+    let tankCapacity: Int
+    var consumption: Int
     var currentLoad: Int?
     var generalCapacity: Int
     var generalCurrentLoad: Int
     
-    init(make: String, model: String, year: Int, capacity: Int, types: [CargoType]? = nil) {
+    init(make: String, model: String, year: Int, capacity: Int, types: [CargoType]? = nil, tankCapacity: Int, consumption: Int) {
         self.make = make
         self.model = model
         self.year = year
@@ -26,6 +28,8 @@ class Vehicle {
         self.types = types
         self.generalCapacity = capacity
         self.generalCurrentLoad = 0
+        self.tankCapacity = tankCapacity
+        self.consumption = consumption
     }
     
     func loadCargo(cargo: Cargo) {
@@ -65,5 +69,17 @@ class Vehicle {
         }
         
         return (true, newLoad, "Груз загружен")
+    }
+    
+    func checkWay(cargo: Cargo, path: Int) -> Bool {
+        let remainingFuel = (Double(path) / Double(consumption)) * 2
+        
+        if Double(tankCapacity) < remainingFuel {
+            return false
+        }
+        
+        let result = load(currentLoad, types, cargo, capacity)
+        
+        return result.result
     }
 }
