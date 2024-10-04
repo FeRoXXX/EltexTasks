@@ -48,6 +48,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2743080A2CB0120D00FE94D8 /* Structs */ = {
+			isa = PBXGroup;
+			children = (
+				279723222CAD45EF00B33275 /* Cargo.swift */,
+			);
+			path = Structs;
+			sourceTree = "<group>";
+		};
+		2743080B2CB0122500FE94D8 /* Enums */ = {
+			isa = PBXGroup;
+			children = (
+				279723242CAD466900B33275 /* CargoType.swift */,
+			);
+			path = Enums;
+			sourceTree = "<group>";
+		};
 		279723092CAD373900B33275 = {
 			isa = PBXGroup;
 			children = (
@@ -67,6 +83,8 @@
 		279723142CAD373900B33275 /* eltexSecondTask */ = {
 			isa = PBXGroup;
 			children = (
+				2743080B2CB0122500FE94D8 /* Enums */,
+				2743080A2CB0120D00FE94D8 /* Structs */,
 				2797231F2CAD378600B33275 /* MakeFiles */,
 				2797231E2CAD377700B33275 /* Classes */,
 			);
@@ -78,8 +96,6 @@
 			children = (
 				2797231C2CAD377300B33275 /* Vehicle.swift */,
 				279723202CAD3BF400B33275 /* Truck.swift */,
-				279723222CAD45EF00B33275 /* Cargo.swift */,
-				279723242CAD466900B33275 /* CargoType.swift */,
 				279723262CAD47C200B33275 /* Fleet.swift */,
 			);
 			path = Classes;

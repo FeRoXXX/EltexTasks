@@ -46,11 +46,6 @@ class Vehicle {
     }
     
     func unloadCargo() {
-        if currentLoad == 0 {
-            print("Машина уже пуста")
-            return
-        }
-        
         currentLoad = 0
         print("Машина разгружена")
     }
