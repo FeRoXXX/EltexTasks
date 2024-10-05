@@ -9,29 +9,35 @@ import Foundation
 
 final class Fleet {
     
-    var allVehicle: [Vehicle]
+    //MARK: - Private features
+    private var allVehicle: [Vehicle]
     
+    //MARK: - Initializer
     init(allVehicle: [Vehicle]) {
         self.allVehicle = allVehicle
     }
     
+    //MARK: - addVehicle function
     func addVehicle(_ vehicle: Vehicle) {
         allVehicle.append(vehicle)
         print("Машина добавлена в автопарк")
     }
     
+    //MARK: - totalCapacity function
     func totalCapacity() -> Int {
         var result = 0
         allVehicle.forEach{ result += $0.generalCapacity }
         return result
     }
     
+    //MARK: - totalCurrentLoad function
     func totalCurrentLoad() -> Int {
         var result = 0
         allVehicle.forEach { result += $0.generalCurrentLoad }
         return result
     }
     
+    //MARK: - canGo function
     func canGo(cargo: [Cargo], path: Int) -> Bool {
         var remainingCargo = cargo
                 
@@ -41,7 +47,8 @@ final class Fleet {
             remainingCargo = remainingCargo.filter { item in
                 let potentialNewLoad = vehicleCurrentLoad + item.weight
                 
-                if potentialNewLoad <= vehicle.generalCapacity && vehicle.checkWay(cargo: item, path: path) {
+                if potentialNewLoad <= vehicle.generalCapacity,
+                   vehicle.checkWay(cargo: item, path: path) {
                     vehicleCurrentLoad = potentialNewLoad
                     return false
                 } else {
@@ -60,6 +67,7 @@ final class Fleet {
         }
     }
     
+    //MARK: - info function
     func info() {
         print(
                 """

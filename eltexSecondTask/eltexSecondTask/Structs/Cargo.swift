@@ -9,10 +9,12 @@ import Foundation
 
 struct Cargo {
     
+    //MARK: - Constants features
     let description: String
     let weight: Int
     let type: CargoType
     
+    //MARK: - Initializer
     init?(description: String, weight: Int, type: CargoType) {
         guard weight >= 0 else {
             return nil

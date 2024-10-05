@@ -8,11 +8,14 @@
 import Foundation
 
 final class Truck: Vehicle {
+    
+    //MARK: - Variables features
     var trailerAttached: Bool
     var trailerCapacity: Int?
     var trailerTypes: [CargoType]?
     var trailerCurrentLoad: Int?
     
+    //MARK: - Initializer
     init(make: String, model: String, year: Int, capacity: Int, types: [CargoType]? = nil, trailerAttached: Bool, trailerCapacity: Int?, trailerTypes: [CargoType]? = nil, tankCapacity: Int, consumption: Int) {
         self.trailerAttached = trailerAttached
         if trailerAttached {
@@ -27,6 +30,7 @@ final class Truck: Vehicle {
         print("Грузовик создан")
     }
     
+    //MARK: - loadCargo function
     override func loadCargo(cargo: Cargo) {
         let currentLoad = currentLoad ?? 0
         super.loadCargo(cargo: cargo)
@@ -44,19 +48,20 @@ final class Truck: Vehicle {
         }
     }
     
+    //MARK: - checkWay function
     override func checkWay(cargo: Cargo, path: Int) -> Bool {
-        if super.checkWay(cargo: cargo, path: path) {
-            return true
+        let canCurry = super.checkWay(cargo: cargo, path: path)
+        
+        if !canCurry,
+           trailerAttached {
+            let remainingFuel = ((Double(path) / 100) * Double(consumption)) * 2
+            
+            if Double(tankCapacity) >= remainingFuel {
+                let result = load(trailerCurrentLoad, trailerTypes, cargo, trailerCapacity)
+                return result.result
+            }
         }
         
-        let remainingFuel = ((Double(path) / 100) * Double(consumption)) * 2
-        
-        if Double(tankCapacity) < remainingFuel {
-            return false
-        }
-        
-        let result = load(trailerCurrentLoad, trailerTypes, cargo, trailerCapacity)
-        
-        return result.result
+        return canCurry
     }
 }
