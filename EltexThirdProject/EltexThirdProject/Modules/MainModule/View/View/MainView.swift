@@ -82,8 +82,8 @@ private extension MainView {
     func setupConstraints() {
         NSLayoutConstraint.activate([
             buttonsCollectionView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -30),
-            buttonsCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            buttonsCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            buttonsCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
+            buttonsCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
             buttonsCollectionView.heightAnchor.constraint(equalTo: buttonsCollectionView.widthAnchor, multiplier: 5.0 / 4.0)
         ])
         

@@ -44,6 +44,8 @@ private extension MainViewModel {
             toggleSign(currentText)
         case "+", "-", "×", "÷":
             addOperators(currentText, text)
+        case ",":
+            checkComma(currentText)
         default:
             switch currentText {
             case "0", "+0":
@@ -61,7 +63,7 @@ private extension MainViewModel {
         var currentText = currentText
         
         switch lastSymbol {
-        case "+", "-", "×", "÷":
+        case "+", "-", "×", "÷", ",":
             currentText.removeLast()
             ui?.setupText(currentText + text)
         default:
@@ -69,51 +71,55 @@ private extension MainViewModel {
         }
     }
     
-    func toggleSign(_ currentText: String) {
-        var separatorNumber = currentText.components(separatedBy: ["+", "-", "×", "÷"])
-        var separatorOperation = getOperations(currentText)
+    func toggleSign(_ text: String) {
+        var separatorNumber = text.components(separatedBy: ["+", "-", "×", "÷"])
+        var separatorOperations = getOperations(text)
+
+        if separatorOperations.isEmpty { ui?.setupText("-" + text)}
         
-        if separatorOperation.isEmpty {
-            ui?.setupText("-" + currentText)
+        guard var previousOperator = separatorOperations.last else {
             return
         }
-        
-        guard let number = Double(separatorOperation[separatorOperation.count - 1] + separatorNumber[separatorNumber.count - 1]) else { return }
-        //TODO: - Добавить проверку на умножение и деление
-        separatorOperation.removeLast()
-        
-        if number > 0 {
-            separatorOperation.append("-")
+
+        if previousOperator == "-" {
+            separatorOperations.removeLast()
+            separatorOperations.append("+")
+        } else if previousOperator == "+" {
+            separatorOperations.removeLast()
+            separatorOperations.append("-")
         } else {
-            separatorOperation.append("+")
+            separatorOperations.append("-")
+            separatorNumber.append("")
+            separatorNumber.swapAt(separatorNumber.count - 1, separatorNumber.count - 2)
         }
-        
-        if separatorNumber.count == 1 {
-            var result = separatorOperation[0]
-            for (index, element) in separatorOperation.enumerated() {
-                result += element + separatorNumber[index + 1]
-            }
-            ui?.setupText(result)
-        } else {
-            var result = separatorNumber[0]
-            for (index, element) in separatorOperation.enumerated() {
-                result += element + separatorNumber[index + 1]
-            }
-            ui?.setupText(result)
+
+        var result = separatorNumber[0]
+        for (index, element) in separatorOperations.enumerated() {
+            result += element + separatorNumber[index + 1]
         }
+
+        ui?.setupText(result)
     }
-    
+
     func makeAction(_ text: String) {
         var separatorNumber = text.components(separatedBy: ["+", "-", "×", "÷"])
         var separatorOperation = getOperations(text)
+        
+        for i in (0..<separatorNumber.count).reversed() {
+            if separatorNumber[i].isEmpty, i + 1 < separatorNumber.count {
+                separatorNumber[i + 1] = separatorOperation[i] + separatorNumber[i + 1]
+                separatorOperation.remove(at: i)
+                separatorNumber.remove(at: i)
+            }
+        }
         
         var index = 0
         while index < separatorOperation.count {
             let operation = separatorOperation[index]
             if operation == "×" || operation == "÷" {
                 
-                let leftNumber = Double(separatorNumber[index]) ?? 0
-                let rightNumber = Double(separatorNumber[index + 1]) ?? 0
+                let leftNumber = separatorNumber[index].convertToDouble() ?? 0
+                let rightNumber = separatorNumber[index + 1].convertToDouble() ?? 0
                 var result: Double = 0
                 
                 switch operation {
@@ -134,10 +140,10 @@ private extension MainViewModel {
         }
         
         index = 0
-        var result = Double(separatorNumber[0]) ?? 0
+        var result = separatorNumber[0].convertToDouble() ?? 0
         while index < separatorOperation.count {
             let operation = separatorOperation[index]
-            let nextNumber = Double(separatorNumber[index + 1]) ?? 0
+            let nextNumber = separatorNumber[index + 1].convertToDouble() ?? 0
             
             switch operation {
             case "+":
@@ -151,8 +157,9 @@ private extension MainViewModel {
             index += 1
         }
         
-        ui?.setupText(String(result))
+        ui?.setupText(result.formatNumber())
     }
+
     
     func makePercent(_ text: String) {
         var separatorNumber = text.components(separatedBy: ["+", "-", "×", "÷"])
@@ -163,7 +170,7 @@ private extension MainViewModel {
         
         let convertNumber = percentNumberDouble * 0.01
         
-        separatorNumber[separatorNumber.count - 1] = String(convertNumber)
+        separatorNumber[separatorNumber.count - 1] = convertNumber.formatNumber()
         
         var result = separatorNumber[0]
         for (index, element) in separatorOperations.enumerated() {
@@ -171,6 +178,17 @@ private extension MainViewModel {
         }
         
         ui?.setupText(result)
+    }
+    
+    func checkComma(_ text: String) {
+        var separatorNumber = text.components(separatedBy: ["+", "-", "×", "÷"])
+        
+        guard let lastNumber = separatorNumber.last else { return }
+        if lastNumber.contains(",") || lastNumber == "" || lastNumber == "0" {
+            return
+        } else {
+            ui?.setupText(text + ",")
+        }
     }
     
     func getOperations(_ text: String) -> [String] {

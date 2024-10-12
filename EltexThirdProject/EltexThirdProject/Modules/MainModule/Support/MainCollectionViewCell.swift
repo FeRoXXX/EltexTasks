@@ -63,12 +63,12 @@ private extension MainCollectionViewCell {
             backgroundColor = .lightGray
             actionName.textColor = .black
         case "÷", "×", "+", "-", "=":
-            backgroundColor = .orange
+            backgroundColor = .systemOrange
         case "0":
             actionName.leftAnchor.constraint(equalTo: leftAnchor, constant: 35).isActive = true
-            backgroundColor = .darkGray
+            backgroundColor = .systemGray5
         default:
-            backgroundColor = .darkGray
+            backgroundColor = .systemGray5
         }
     }
     
