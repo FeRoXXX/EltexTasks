@@ -9,6 +9,7 @@ import Foundation
 
 extension Double {
     
+    //MARK: - Double to string formatter
     func formatNumber() -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal

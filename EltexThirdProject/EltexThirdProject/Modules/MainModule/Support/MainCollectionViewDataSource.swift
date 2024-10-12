@@ -9,8 +9,10 @@ import UIKit
 
 final class MainCollectionViewDataSource: NSObject, UICollectionViewDataSource {
     
+    //MARK: - Public closure
     var userAction: ((String) -> Void)?
     
+    //MARK: - CollectionView Data source functions
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         ActionsConstant.actionArray.count
     }

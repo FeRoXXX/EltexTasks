@@ -9,6 +9,7 @@ import Foundation
 
 extension String {
     
+    //MARK: - String to double formatter
     func convertToDouble() -> Double? {
         let formattedText = self.replacingOccurrences(of: ",", with: ".")
         return Double(formattedText)

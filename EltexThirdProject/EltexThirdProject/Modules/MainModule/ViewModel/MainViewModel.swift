@@ -9,10 +9,12 @@ import Foundation
 
 final class MainViewModel {
     
+    //MARK: - Private properties
     private var ui: IMainViewController?
     private let dataSource: MainCollectionViewDataSource
     private var lastAction: String = ""
     
+    //MARK: - Initialize
     init(dataSource: MainCollectionViewDataSource) {
         self.dataSource = dataSource
         setupDataSourceAction()
@@ -21,12 +23,14 @@ final class MainViewModel {
 
 private extension MainViewModel {
     
+    //MARK: - Setup closure function
     func setupDataSourceAction() {
         dataSource.userAction = { [weak self] text in
             self?.showAction(text: text)
         }
     }
     
+    //MARK: - Show action function
     func showAction(text: String) {
         let currentText = ui?.getText() ?? "0"
         if text != "AC",
@@ -64,6 +68,7 @@ private extension MainViewModel {
         lastAction = text
     }
     
+    //MARK: - Add operators function
     func addOperators(_ currentText: String, _ text: String) {
         guard let lastSymbol = currentText.last else { return }
         var currentText = currentText
@@ -77,13 +82,14 @@ private extension MainViewModel {
         }
     }
     
+    //MARK: - Toggle sign function
     func toggleSign(_ text: String) {
         var separatorNumber = text.components(separatedBy: ["+", "-", "×", "÷"])
         var separatorOperations = getOperations(text)
 
         if separatorOperations.isEmpty { ui?.setupText("-" + text)}
         
-        guard var previousOperator = separatorOperations.last else {
+        guard let previousOperator = separatorOperations.last else {
             return
         }
 
@@ -107,6 +113,7 @@ private extension MainViewModel {
         ui?.setupText(result)
     }
 
+    //MARK: - Make action function
     func makeAction(_ text: String) {
         var separatorNumber = text.components(separatedBy: ["+", "-", "×", "÷"])
         var separatorOperation = getOperations(text)
@@ -170,7 +177,7 @@ private extension MainViewModel {
         ui?.setupText(result.formatNumber())
     }
 
-    
+    //MARK: - Make percent function
     func makePercent(_ text: String) {
         var separatorNumber = text.components(separatedBy: ["+", "-", "×", "÷"])
         let separatorOperations = getOperations(text)
@@ -190,8 +197,9 @@ private extension MainViewModel {
         ui?.setupText(result)
     }
     
+    //MARK: - Check comma function
     func checkComma(_ text: String) {
-        var separatorNumber = text.components(separatedBy: ["+", "-", "×", "÷"])
+        let separatorNumber = text.components(separatedBy: ["+", "-", "×", "÷"])
         
         guard let lastNumber = separatorNumber.last else { return }
         if lastNumber.contains(",") || lastNumber == "" || lastNumber == "0" {
@@ -201,6 +209,7 @@ private extension MainViewModel {
         }
     }
     
+    //MARK: - Get operations function
     func getOperations(_ text: String) -> [String] {
         
         var separatorOperation: [String] = []
@@ -215,6 +224,7 @@ private extension MainViewModel {
 
 extension MainViewModel: IMainViewModel {
     
+    //MARK: - Protocol functions
     func viewLoaded(ui: IMainViewController) {
         self.ui = ui
     }

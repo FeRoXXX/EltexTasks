@@ -9,7 +9,10 @@ import UIKit
 
 final class MainCollectionViewCell: UICollectionViewCell {
     
+    //MARK: - Public closure
     var clickOnCell: ((String) -> ())?
+    
+    //MARK: - Private properties
     private let actionName: UILabel = {
         let label = UILabel() 
         label.font = UIFont.boldSystemFont(ofSize: 40)
@@ -19,6 +22,7 @@ final class MainCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
+    //MARK: - Initialise
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -33,6 +37,7 @@ final class MainCollectionViewCell: UICollectionViewCell {
 
 private extension MainCollectionViewCell {
     
+    //MARK: - Setup ui element function
     func setupUI() {
         backgroundColor = .darkGray
         self.layer.cornerRadius = self.frame.height / 2
@@ -41,10 +46,12 @@ private extension MainCollectionViewCell {
         setupConstraints()
     }
     
+    //MARK: - Add subview to view
     func addSubviews() {
         addSubview(actionName)
     }
     
+    //MARK: - Setup constraint function
     func setupConstraints() {
         NSLayoutConstraint.activate([
             actionName.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -52,11 +59,13 @@ private extension MainCollectionViewCell {
         ])
     }
     
+    //MARK: - Setup gesture recognizer function
     func setupGesture() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(clickInCell))
         self.addGestureRecognizer(tapGesture)
     }
     
+    //MARK: - Setup style for cell function
     func setCellStyle() {
         switch actionName.text! {
         case "AC", "+/-", "%":
@@ -72,6 +81,7 @@ private extension MainCollectionViewCell {
         }
     }
     
+    //MARK: - Objc function
     @objc func clickInCell() {
         clickOnCell?(actionName.text ?? "0")
     }
@@ -79,6 +89,7 @@ private extension MainCollectionViewCell {
 
 extension MainCollectionViewCell {
     
+    //MARK: - Public functions
     func setupText(_ text: String) {
         actionName.text = text
     }
@@ -87,6 +98,7 @@ extension MainCollectionViewCell {
         setCellStyle()
     }
     
+    //MARK: - Static functions
     static var identifier: String {
         return String(describing: MainCollectionViewCell.self)
     }

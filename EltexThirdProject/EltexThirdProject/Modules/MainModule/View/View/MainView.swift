@@ -9,6 +9,7 @@ import UIKit
 
 final class MainView: UIView {
     
+    //MARK: - Private properties
     private let showOperationsLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
@@ -28,6 +29,7 @@ final class MainView: UIView {
         return collectionView
     }()
     
+    //MARK: - Initialise
     init(delegate: UICollectionViewDelegate, dataSource: UICollectionViewDataSource) {
         super.init(frame: .zero)
         buttonsCollectionView.delegate = delegate
@@ -39,7 +41,41 @@ final class MainView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
+
+private extension MainView {
     
+    //MARK: - Setup ui element function
+    func setupUI() {
+        backgroundColor = .systemBackground
+        addSubviews()
+        setupConstraints()
+    }
+    
+    //MARK: - Add subview to view
+    func addSubviews() {
+        addSubview(showOperationsLabel)
+        addSubview(buttonsCollectionView)
+    }
+    
+    //MARK: - Setup constraint function
+    func setupConstraints() {
+        NSLayoutConstraint.activate([
+            buttonsCollectionView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -30),
+            buttonsCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
+            buttonsCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
+            buttonsCollectionView.heightAnchor.constraint(equalTo: buttonsCollectionView.widthAnchor, multiplier: 5.0 / 4.0)
+        ])
+        
+        NSLayoutConstraint.activate([
+            showOperationsLabel.bottomAnchor.constraint(equalTo: buttonsCollectionView.topAnchor, constant: 5),
+            showOperationsLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 35),
+            showOperationsLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -35),
+            showOperationsLabel.heightAnchor.constraint(equalToConstant: 100)
+        ])
+    }
+    
+    //MARK: - Create collectionLayout function
     func createLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout {
             (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
@@ -66,38 +102,9 @@ final class MainView: UIView {
     }
 }
 
-private extension MainView {
-    
-    func setupUI() {
-        backgroundColor = .systemBackground
-        addSubviews()
-        setupConstraints()
-    }
-    
-    func addSubviews() {
-        addSubview(showOperationsLabel)
-        addSubview(buttonsCollectionView)
-    }
-    
-    func setupConstraints() {
-        NSLayoutConstraint.activate([
-            buttonsCollectionView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -30),
-            buttonsCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
-            buttonsCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
-            buttonsCollectionView.heightAnchor.constraint(equalTo: buttonsCollectionView.widthAnchor, multiplier: 5.0 / 4.0)
-        ])
-        
-        NSLayoutConstraint.activate([
-            showOperationsLabel.bottomAnchor.constraint(equalTo: buttonsCollectionView.topAnchor, constant: 5),
-            showOperationsLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 35),
-            showOperationsLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -35),
-            showOperationsLabel.heightAnchor.constraint(equalToConstant: 100)
-        ])
-    }
-}
-
 extension MainView {
     
+    //MARK: - Public functions
     func setupText(_ text: String) {
         showOperationsLabel.text = text
     }

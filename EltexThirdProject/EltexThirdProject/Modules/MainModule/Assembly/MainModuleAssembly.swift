@@ -9,6 +9,7 @@ import UIKit
 
 final class MainModuleAssembly {
     
+    //MARK: - Build module function
     static func build() -> UIViewController {
         
         let dataSource = MainCollectionViewDataSource()

@@ -8,6 +8,7 @@
 import Foundation
 
 enum ActionsConstant {
+    //MARK: - Operation constant
     static let actionArray = ["AC", "+/-", "%", "÷",
                               "7", "8", "9", "×",
                               "4", "5", "6", "-",
