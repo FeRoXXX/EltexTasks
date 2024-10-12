@@ -11,6 +11,7 @@ final class MainViewModel {
     
     private var ui: IMainViewController?
     private let dataSource: MainCollectionViewDataSource
+    private var lastAction: String = ""
     
     init(dataSource: MainCollectionViewDataSource) {
         self.dataSource = dataSource
@@ -47,15 +48,20 @@ private extension MainViewModel {
         case ",":
             checkComma(currentText)
         default:
-            switch currentText {
-            case "0", "+0":
+            if lastAction != "=" {
+                switch currentText {
+                case "0", "+0":
+                    ui?.setupText(text)
+                case "-0":
+                    ui?.setupText("-" + text)
+                default:
+                    ui?.setupText(currentText + text)
+                }
+            } else {
                 ui?.setupText(text)
-            case "-0":
-                ui?.setupText("-" + text)
-            default:
-                ui?.setupText(currentText + text)
             }
         }
+        lastAction = text
     }
     
     func addOperators(_ currentText: String, _ text: String) {
@@ -126,6 +132,10 @@ private extension MainViewModel {
                 case "×":
                     result = leftNumber * rightNumber
                 case "÷":
+                    if rightNumber == 0 {
+                        ui?.setupText("ERROR")
+                        return
+                    }
                     result = leftNumber / rightNumber
                 default:
                     break
