@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		27CE53AE2CE46E1000AB3041 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 27CE53AD2CE46E1000AB3041 /* SnapKit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		277EFD462CE466CF00701303 /* EltexNews.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EltexNews.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				27CE53AE2CE46E1000AB3041 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 			);
 			name = EltexNews;
 			packageProductDependencies = (
+				27CE53AD2CE46E1000AB3041 /* SnapKit */,
 			);
 			productName = EltexNews;
 			productReference = 277EFD462CE466CF00701303 /* EltexNews.app */;
@@ -107,6 +113,9 @@
 			);
 			mainGroup = 277EFD3D2CE466CF00701303;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				27CE53AC2CE46E1000AB3041 /* XCRemoteSwiftPackageReference "SnapKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 277EFD472CE466CF00701303 /* Products */;
 			projectDirPath = "";
@@ -333,6 +342,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		27CE53AC2CE46E1000AB3041 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		27CE53AD2CE46E1000AB3041 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 27CE53AC2CE46E1000AB3041 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 277EFD3E2CE466CF00701303 /* Project object */;
 }
