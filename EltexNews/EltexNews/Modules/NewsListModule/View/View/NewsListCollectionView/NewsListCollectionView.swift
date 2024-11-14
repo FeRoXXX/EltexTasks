@@ -10,14 +10,13 @@ import SnapKit
 
 final class NewsListCollectionView: UICollectionView {
     
-    private var data: [String] = ["", "","", "","", "","", "","", "","", "","", "","", "","", "","", ""]
+    var data: [NewsGeneralModel] = []
     
     //MARK: - Initialization
     
     override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
         super.init(frame: frame, collectionViewLayout: layout)
         register(NewsCollectionViewCell.self, forCellWithReuseIdentifier: NewsCollectionViewCell.identifier)
-        self.delegate = self
         self.dataSource = self
     }
     
@@ -29,7 +28,7 @@ final class NewsListCollectionView: UICollectionView {
 
 //MARK: - UICollectionViewDelegate & UICollectionViewDataSource
 
-extension NewsListCollectionView: UICollectionViewDelegate, UICollectionViewDataSource {
+extension NewsListCollectionView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         data.count
     }
@@ -38,6 +37,7 @@ extension NewsListCollectionView: UICollectionViewDelegate, UICollectionViewData
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NewsCollectionViewCell.identifier, for: indexPath) as? NewsCollectionViewCell else {
             return UICollectionViewCell()
         }
+        cell.setupData(data: data[indexPath.row])
         return cell
     }
 }

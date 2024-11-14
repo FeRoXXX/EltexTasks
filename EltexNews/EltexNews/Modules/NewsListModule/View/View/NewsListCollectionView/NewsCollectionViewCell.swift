@@ -14,19 +14,17 @@ final class NewsCollectionViewCell: UICollectionViewCell {
     
     private var newsImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = .mona
+        imageView.image = .remove
         return imageView
     }()
     
     private var newsTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "ktgtogntoign"
         return label
     }()
     
     private var newsDescriptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "gtgthtrhtrthr"
         label.numberOfLines = 0
         return label
     }()
@@ -83,7 +81,6 @@ private extension NewsCollectionViewCell {
         }
         
         newsTitleLabel.snp.contentHuggingVerticalPriority = 750
-        
     }
 }
 
@@ -95,5 +92,10 @@ extension NewsCollectionViewCell {
     
     static var identifier: String {
         return String(describing: NewsCollectionViewCell.self)
+    }
+    
+    func setupData(data: NewsGeneralModel) {
+        newsTitleLabel.text = data.title
+        newsDescriptionLabel.text = data.description
     }
 }
