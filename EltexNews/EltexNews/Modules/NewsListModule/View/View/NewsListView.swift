@@ -36,11 +36,7 @@ final class NewsListView: UIView {
         return button
     }()
     
-    //MARK: - Public properties
-    
-    var menuPublisher = PassthroughSubject<String, Never>()
-    
-    var searchBar: UITextField = {
+    private(set) var searchBar: UITextField = {
         let searchString = UITextField()
         searchString.leftViewMode = .always
         let view = UIImageView(image: UIImage(systemName: "magnifyingglass"))
@@ -52,10 +48,13 @@ final class NewsListView: UIView {
         return searchString
     }()
     
-    lazy var newsCollectionView: NewsListCollectionView = {
+    private(set) lazy var newsCollectionView: NewsListCollectionView = {
         let collectionView = NewsListCollectionView(frame: .zero, collectionViewLayout: createLayout())
         return collectionView
     }()
+    
+    private(set) lazy var activityIndicator = UIActivityIndicatorView(style: .medium)
+    private(set) var menuPublisher = PassthroughSubject<String, Never>()
     
     //MARK: - Initialization
     
@@ -76,7 +75,6 @@ private extension NewsListView {
     
     //MARK: - UI initialization functions
     
-    
     func setupUI() {
         backgroundColor = .white
         addSubviews()
@@ -87,6 +85,7 @@ private extension NewsListView {
         addSubview(searchBar)
         addSubview(sortButton)
         addSubview(newsCollectionView)
+        addSubview(activityIndicator)
     }
     
     func setupConstraints() {
@@ -104,14 +103,21 @@ private extension NewsListView {
             make.top.equalTo(searchBar.snp.bottom).inset(-10)
             make.leading.trailing.bottom.equalToSuperview().inset(10)
         }
+        
+        activityIndicator.snp.makeConstraints { make in
+            make.centerX.equalTo(snp.centerX)
+            make.centerY.equalTo(snp.centerY).inset(40)
+        }
     }
+    
+    //MARK: - Collection view layout
     
     func createLayout() -> UICollectionViewLayout {
         let spacing: CGFloat = 5
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0/2.0), heightDimension: .fractionalHeight(1.0))
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0 / 2.5))
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: 2)
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0 / 5.0))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: 1)
         group.interItemSpacing = .fixed(spacing)
         
         let section = NSCollectionLayoutSection(group: group)
@@ -126,8 +132,22 @@ private extension NewsListView {
 
 extension NewsListView {
     
+    //MARK: - UI elements update functions
+    
     func updateCollection(data: [NewsGeneralModel]) {
         newsCollectionView.data = data
         newsCollectionView.reloadData()
+    }
+    
+    func startLoading() {
+        newsCollectionView.isHidden = true
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+    }
+    
+    func stopLoading() {
+        newsCollectionView.isHidden = false
+        activityIndicator.stopAnimating()
+        activityIndicator.isHidden = true
     }
 }

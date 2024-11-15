@@ -12,14 +12,10 @@ final class NewsCollectionViewCell: UICollectionViewCell {
     
     //MARK: - Private properties
     
-    private var newsImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = .remove
-        return imageView
-    }()
-    
     private var newsTitleLabel: UILabel = {
         let label = UILabel()
+        label.font = .boldSystemFont(ofSize: 18)
+        label.numberOfLines = 0
         return label
     }()
     
@@ -58,19 +54,14 @@ private extension NewsCollectionViewCell {
     }
     
     func addSubviews() {
-        addSubview(newsImageView)
         addSubview(newsTitleLabel)
         addSubview(newsDescriptionLabel)
     }
     
     func setupConstraints() {
-        newsImageView.snp.makeConstraints { make in
-            make.top.leading.trailing.equalToSuperview()
-            make.height.equalTo(newsDescriptionLabel.snp.width)
-        }
         
         newsTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(newsImageView.snp.bottom).inset(-10)
+            make.top.equalToSuperview().inset(10)
             make.leading.trailing.equalToSuperview().inset(10)
         }
         
@@ -93,6 +84,8 @@ extension NewsCollectionViewCell {
     static var identifier: String {
         return String(describing: NewsCollectionViewCell.self)
     }
+    
+    //MARK: - Setup data function
     
     func setupData(data: NewsGeneralModel) {
         newsTitleLabel.text = data.title

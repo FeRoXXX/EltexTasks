@@ -13,9 +13,11 @@ final class NewsPageView: UIView {
     
     //MARK: - Private properties
     
-    private var newsImageView: UIImageView = {
-        let imageView = UIImageView()
-        return imageView
+    private var titleLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.font = .boldSystemFont(ofSize: 18)
+        return label
     }()
     
     private lazy var dateAndAuthorStack: UIStackView = {
@@ -38,10 +40,9 @@ final class NewsPageView: UIView {
     
     private var newsTextLabel: UILabel = {
         let label = UILabel()
+        label.numberOfLines = 0
         return label
     }()
-    
-    //MARK: - Public properties
     
     //MARK: - Initialization
     
@@ -70,26 +71,29 @@ private extension NewsPageView {
     }
     
     func addSubviews() {
-        addSubview(newsImageView)
+        addSubview(titleLabel)
         addSubview(dateAndAuthorStack)
         addSubview(newsTextLabel)
     }
     
     func setupConstraints() {
-        newsImageView.snp.makeConstraints { make in
-            make.top.leading.trailing.equalToSuperview().inset(10)
-            make.height.equalTo(200)
+        titleLabel.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(10)
+            make.top.equalTo(safeAreaLayoutGuide.snp.top).inset(10)
         }
         
         dateAndAuthorStack.snp.makeConstraints { make in
-            make.top.equalTo(newsImageView.snp.bottom).inset(10)
+            make.top.equalTo(titleLabel.snp.bottom).inset(-10)
             make.leading.trailing.equalToSuperview().inset(10)
         }
         
         newsTextLabel.snp.makeConstraints { make in
-            make.bottom.leading.trailing.equalToSuperview().inset(10)
-            make.top.equalTo(dateAndAuthorStack.snp.bottom).inset(10)
+            make.leading.trailing.equalToSuperview().inset(10)
+            make.bottom.lessThanOrEqualTo(safeAreaLayoutGuide.snp.bottom).inset(-10)
+            make.top.equalTo(dateAndAuthorStack.snp.bottom).inset(-10)
         }
+        
+        newsTextLabel.snp.contentCompressionResistanceVerticalPriority = 780
     }
 }
 
@@ -97,4 +101,10 @@ private extension NewsPageView {
 
 extension NewsPageView {
     
+    func setupData(_ data: NavigateItem) {
+        titleLabel.text = data.title
+        authorLabel.text = data.author
+        dateLabel.text = data.date
+        newsTextLabel.text = data.content
+    }
 }

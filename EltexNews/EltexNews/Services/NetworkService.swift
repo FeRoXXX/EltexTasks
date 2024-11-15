@@ -15,14 +15,14 @@ enum NetworkError: Error {
 }
 
 enum NetworkService {
-    case getPostsWithoutSort(searchString: String)
-    case getPostsWithSort(searchingString: String, sort: String)
+    case getPostsWithoutSort(searchString: String, pageNumber: Int = 1)
+    case getPostsWithSort(searchingString: String, pageNumber: Int = 1, sort: String)
     
     private var urlSession: URLSession {
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = 20
         configuration.httpAdditionalHeaders = [
-            "Authorization": "Bearer 8f63e1069a0e4dbdb44fb33f2ab742d5"
+            "Authorization": "Bearer b01c529c64d84b45b4908e317ba0e4b9"
         ]
         
         return URLSession(configuration: configuration)
@@ -47,30 +47,23 @@ extension NetworkService {
                 guard (200...299).contains(httpResponse.statusCode) else {
                     throw NetworkError.statusCode(httpResponse.statusCode)
                 }
-                print(try JSONDecoder().decode(NewsListGeneralModel.self, from: data))
                 return data
             }
             .decode(type: NewsListGeneralModel.self, decoder: JSONDecoder())
-            .handleEvents(
-                receiveSubscription: { _ in print("Starting network request for \(request)") },
-                receiveOutput: { data in print("Received data of size: \(data) bytes") },
-                receiveCompletion: { completion in print("Request completed with: \(completion)") },
-                receiveCancel: { print("Request was cancelled") }
-            )
             .eraseToAnyPublisher()
     }
     
     func makeRequest() -> URLRequest? {
         let baseURL = "https://newsapi.org/v2/everything"
         switch self {
-        case .getPostsWithoutSort(let searchString):
-            guard let requestURL = URL(string: "\(baseURL)?q=\(searchString)") else {
+        case .getPostsWithoutSort(let searchString, let pageNumber):
+            guard let requestURL = URL(string: "\(baseURL)?pageSize=20&page=\(pageNumber)&q=\(searchString)") else {
                 return nil
             }
             return URLRequest(url: requestURL)
             
-        case .getPostsWithSort(let searchingString, let sort):
-            guard let requestURL = URL(string: "\(baseURL)?q=\(searchingString)&sortBy=\(sort)") else {
+        case .getPostsWithSort(let searchingString, let pageNumber, let sort):
+            guard let requestURL = URL(string: "\(baseURL)?pageSize=20&page=\(pageNumber)&q=\(searchingString)&sortBy=\(sort)") else {
                 return nil
             }
             return URLRequest(url: requestURL)
