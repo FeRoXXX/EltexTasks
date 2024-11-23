@@ -12,13 +12,20 @@ final class ImageListView: UIView {
     
     //MARK: - Private properties
     
-    private lazy var collectionView: ImageListCollectionView = ImageListCollectionView(frame: .zero, collectionViewLayout: createLayout())
+    private lazy var collectionView: ImageListCollectionView = {
+        let collectionView = ImageListCollectionView(frame: .zero, collectionViewLayout: createLayout())
+        collectionView.viewModel = viewModel
+        return collectionView
+    }()
+    private let viewModel: ImageListViewModel
     
     //MARK: - Initialization
     
-    init() {
+    init(viewModel: ImageListViewModel) {
+        self.viewModel = viewModel
         super.init(frame: .zero)
         setupUI()
+        bind()
     }
     
     @available(*, unavailable)
@@ -48,6 +55,14 @@ private extension ImageListView {
             make.leading.trailing.equalToSuperview().inset(10)
             make.top.equalTo(safeAreaLayoutGuide.snp.top)
             make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
+        }
+    }
+    
+    //MARK: - Bindings
+    
+    func bind() {
+        viewModel.dataIsLoading = { [weak self] in
+            self?.collectionView.reloadData()
         }
     }
     

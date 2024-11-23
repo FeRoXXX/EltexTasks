@@ -11,7 +11,7 @@ final class ImageListCollectionView: UICollectionView {
     
     //MARK: - Private properties
     
-    private let data: [Int] = [0,1,2,3,4,5,6,7,8,9]
+    var viewModel: ImageListViewModelInput?
     
     //MARK: - Initializaton
     
@@ -31,15 +31,14 @@ final class ImageListCollectionView: UICollectionView {
 
 extension ImageListCollectionView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return data.count
+        guard let viewModel else { return 0 }
+        return viewModel.data.data.count * viewModel.data.data.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageListCollectionViewCell.identifier, for: indexPath) as? ImageListCollectionViewCell else { return UICollectionViewCell() }
-        cell.layer.cornerRadius = 12
-        cell.layer.masksToBounds = true
-        cell.layer.borderWidth = 1
-        cell.layer.borderColor = UIColor.black.cgColor
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageListCollectionViewCell.identifier, for: indexPath) as? ImageListCollectionViewCell,
+              let viewModel else { return UICollectionViewCell() }
+        cell.setupImage(with: URL(string: viewModel.data.data[indexPath.row % 8]))
         return cell
     }
 }
