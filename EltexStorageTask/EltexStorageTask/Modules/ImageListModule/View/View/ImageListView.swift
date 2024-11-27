@@ -12,6 +12,11 @@ final class ImageListView: UIView {
     
     //MARK: - Private properties
     
+    private lazy var imageListCollectionView: ImageListCollectionView = {
+        let collectionView = ImageListCollectionView(frame: .zero, collectionViewLayout: createLayout())
+        return collectionView
+    }()
+    
     //MARK: - Initialization
     
     init() {
@@ -23,7 +28,6 @@ final class ImageListView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
 }
 
 //MARK: - Private extension
@@ -39,10 +43,26 @@ private extension ImageListView {
     }
     
     func addSubviews() {
-        
+        addSubview(imageListCollectionView)
     }
     
     func setupConstraints() {
+        imageListCollectionView.snp.makeConstraints { make in
+            make.top.leading.trailing.bottom.equalToSuperview()
+        }
+    }
+    
+    //MARK: - Create layout functions
+    
+    func createLayout() -> UICollectionViewLayout {
         
+        let itemSize = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .fractionalWidth(0.5),
+                                                                heightDimension: .fractionalHeight(1.0)))
+        itemSize.contentInsets = .init(top: 5, leading: 5, bottom: 5, trailing: 5)
+        let groupSize = NSCollectionLayoutGroup.horizontal(layoutSize: .init(widthDimension: .fractionalWidth(1.0),
+                                                                           heightDimension: .fractionalWidth(0.5)),
+                                                         subitems: [itemSize])
+        let section = NSCollectionLayoutSection(group: groupSize)
+        return UICollectionViewCompositionalLayout(section: section)
     }
 }
