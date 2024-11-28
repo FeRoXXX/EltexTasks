@@ -157,6 +157,7 @@
 				DEVELOPMENT_TEAM = 587Y6CB23X;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = EltexStorageTask/Recources/Info.plist;
+				INFOPLIST_KEY_NSIdentityUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -184,6 +185,7 @@
 				DEVELOPMENT_TEAM = 587Y6CB23X;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = EltexStorageTask/Recources/Info.plist;
+				INFOPLIST_KEY_NSIdentityUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";

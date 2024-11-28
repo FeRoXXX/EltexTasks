@@ -68,14 +68,17 @@ extension NetworkService {
     //MARK: - URL and Request generating
     
     private func makeRequest() -> URLRequest? {
-        let baseURL = "http://164.90.163.215:1337/api/upload"
+        let baseURL = "http://164.90.163.215:1337"
         
         switch self {
         case .getImageMetadata:
-            guard let requestURL = URL(string: "\(baseURL)/files") else { return nil }
+            guard let requestURL = URL(string: "\(baseURL)/api/upload/files") else { return nil }
             return URLRequest(url: requestURL)
         case .getImageFromURL(let url):
-            return URLRequest(url: url)
+            guard let requestURL = URL(string: "\(baseURL)/uploads/\(url.lastPathComponent)") else { return nil }
+            return URLRequest(url: requestURL)
         }
     }
+    
+    
 }

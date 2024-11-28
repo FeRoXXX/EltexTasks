@@ -6,24 +6,31 @@
 //
 
 import UIKit
+import Combine
 
 final class ImageListViewController: UIViewController {
     
     //MARK: - Private properties
     
+    private(set) var addImageButtonTapped: PassthroughSubject<Void, Never> = .init()
+    
     private let contentView = ImageListView()
+    private let viewModel: ImageListViewModel
+    private var bindings: Set<AnyCancellable> = []
     
     //MARK: - Lifecycle functions
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        configureNavigationBar()
         bind()
     }
     
     //MARK: - Initialization
     
-    init() {
+    init(viewModel: ImageListViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -35,7 +42,7 @@ final class ImageListViewController: UIViewController {
 
 //MARK: - Private extension
 
-extension ImageListViewController {
+private extension ImageListViewController {
     
     //MARK: - UI initialization function
     
@@ -50,16 +57,57 @@ extension ImageListViewController {
         //MARK: - Bind view to viewModel
         
         func bindViewToViewModel() {
-            
+            addImageButtonTapped
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] _ in
+                    self?.viewModel.navigate = .addImage
+                }
+                .store(in: &bindings)
         }
         
         //MARK: - Bind viewModel to view
         
         func bindViewModelToView() {
             
+            viewModel.$data
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] value in
+                    guard let value else { return }
+                    self?.contentView.imageListCollectionView.data = value.map { return $0.url }
+                    self?.contentView.imageListCollectionView.reloadData()
+                }
+                .store(in: &bindings)
+            
+            viewModel.$navigate
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] value in
+                    self?.navigateTo(value)
+                }
+                .store(in: &bindings)
         }
         
         bindViewToViewModel()
         bindViewModelToView()
+    }
+    
+    //MARK: - Configure navigation bar
+    
+    func configureNavigationBar() {
+        navigationItem.rightBarButtonItems = [UIBarButtonItem(title: "Добавить картинку", style: .done, target: self, action: #selector(addImageHandler))]
+    }
+    
+    @objc func addImageHandler() {
+        addImageButtonTapped.send()
+    }
+    
+    //MARK: - Navigation
+    
+    func navigateTo(_ window: NavigationControllers) {
+        switch window {
+        case .addImage:
+            navigationController?.pushViewController(ImageListModuleAssembly.build(), animated: true)
+        case .none:
+            return
+        }
     }
 }

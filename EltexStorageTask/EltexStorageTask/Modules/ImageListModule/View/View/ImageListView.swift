@@ -12,7 +12,7 @@ final class ImageListView: UIView {
     
     //MARK: - Private properties
     
-    private lazy var imageListCollectionView: ImageListCollectionView = {
+    lazy var imageListCollectionView: ImageListCollectionView = {
         let collectionView = ImageListCollectionView(frame: .zero, collectionViewLayout: createLayout())
         return collectionView
     }()

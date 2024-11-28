@@ -32,12 +32,11 @@ extension ImageService {
                 .eraseToAnyPublisher()
         case .getImageFromURL(let url):
             return NetworkService.getImageFromURL(url).fetch()
-                .tryMap { data in
-                    guard let image = UIImage(data: data) as? T else {
-                        throw ImageServiceError.decodingError
-                    }
-                    return image
-                }
+                .tryMap({ data in
+                    guard let image = UIImage(data: data) else { throw ImageServiceError.decodingError }
+                    guard let imageType = ImageListCellDataModel(image: image) as? T else { throw ImageServiceError.decodingError }
+                    return imageType
+                })
                 .eraseToAnyPublisher()
         }
     }
