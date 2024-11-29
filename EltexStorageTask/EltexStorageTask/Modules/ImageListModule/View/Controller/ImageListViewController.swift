@@ -13,7 +13,6 @@ final class ImageListViewController: UIViewController {
     //MARK: - Private properties
     
     private(set) var addImageButtonTapped: PassthroughSubject<Void, Never> = .init()
-    
     private let contentView = ImageListView()
     private let viewModel: ImageListViewModel
     private var bindings: Set<AnyCancellable> = []

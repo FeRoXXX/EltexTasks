@@ -40,7 +40,7 @@ final class ImageUploadView: UIView {
         return stackView
     }()
     
-    private lazy var uploadURLButton: UIButton = {
+    private(set) lazy var uploadURLButton: UIButton = {
         let button = UIButton()
         var configuration = UIButton.Configuration.filled()
         configuration.title = "Загрузить по ссылке"
@@ -82,18 +82,12 @@ final class ImageUploadView: UIView {
     init() {
         super.init(frame: .zero)
         setupUI()
+        setupGestureRecognizer()
     }
     
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    //MARK: - Setup image to imageView function
-    
-    func setImage(_ image: UIImage) {
-        previewImageView.image = image
-        sendToServerButton.isEnabled = true
     }
 }
 
@@ -138,6 +132,19 @@ private extension ImageUploadView {
         }
     }
     
+    //MARK: - Tap gesture recognizer
+    
+    func setupGestureRecognizer() {
+        let gestureRecognize = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        addGestureRecognizer(gestureRecognize)
+    }
+    
+    //MARK: - Gesture action
+    
+    @objc func dismissKeyboard() {
+        endEditing(true)
+    }
+    
     //MARK: - Buttons actions
     
     @objc func uploadFromGallery() {
@@ -146,5 +153,31 @@ private extension ImageUploadView {
     
     @objc func uploadFromURL() {
         uploadImageFromURL = urlTextField.text
+    }
+}
+
+//MARK: - Public extensions
+
+extension ImageUploadView {
+    
+    //MARK: - Setup image to imageView function
+    
+    func setImage(_ image: UIImage) {
+        previewImageView.image = image
+        sendToServerButton.isEnabled = true
+    }
+    
+    //MARK: - Start loading animation
+    
+    func startLoading() {
+        spinLoader.isHidden = false
+        spinLoader.startAnimating()
+    }
+    
+    //MARK: - Stop loading animation
+    
+    func stopLoading() {
+        spinLoader.stopAnimating()
+        spinLoader.isHidden = true
     }
 }

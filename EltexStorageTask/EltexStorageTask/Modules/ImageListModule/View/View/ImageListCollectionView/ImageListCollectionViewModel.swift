@@ -18,6 +18,7 @@ final class ImageListCollectionViewModel {
     //MARK: - Public properties
     
     @Published var currentCellImage: ImageListCellDataModel?
+    @Published var progress: Double = 0
     
     //MARK: - Initialization
     
@@ -33,10 +34,13 @@ final class ImageListCollectionViewModel {
             .fetch()
             .receive(on: DispatchQueue.main)
             .sink { value in
-                print(value)
                 return
-            } receiveValue: { [weak self] (value: ImageListCellDataModel) in
-                self?.currentCellImage = value
+            } receiveValue: { [weak self] (value: FetchResultDataModel) in
+                if let value = value.image {
+                    self?.currentCellImage = value
+                } else {
+                    self?.progress = value.progress
+                }
             }
             .store(in: &bindings)
     }

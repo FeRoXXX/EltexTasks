@@ -14,6 +14,8 @@ struct ImageListCellDataModel: Codable {
         case image
     }
 
+    //MARK: - Initialization
+    
     init(image: UIImage) {
         self.image = image
     }
@@ -28,7 +30,9 @@ struct ImageListCellDataModel: Codable {
         }
         self.image = decodedImage
     }
-
+    
+    //MARK: - Encode method
+    
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         guard let imageData = image.pngData() else {
@@ -40,3 +44,4 @@ struct ImageListCellDataModel: Codable {
         try container.encode(imageData, forKey: .image)
     }
 }
+

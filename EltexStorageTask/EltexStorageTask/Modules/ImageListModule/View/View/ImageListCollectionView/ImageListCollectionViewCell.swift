@@ -112,5 +112,12 @@ extension ImageListCollectionViewCell {
                 self?.downloadedImageView.image = data.image
             }
             .store(in: &bindings)
+        
+        data.$progress
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] value in
+                self?.progressDownloadingView.progress = Float(value)
+            }
+            .store(in: &bindings)
     }
 }

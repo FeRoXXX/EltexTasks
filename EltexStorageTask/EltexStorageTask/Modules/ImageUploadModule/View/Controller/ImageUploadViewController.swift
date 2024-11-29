@@ -73,6 +73,7 @@ private extension ImageUploadViewController {
                     self?.contentView.setImage(value)
                 }
                 .store(in: &bindings)
+            
             contentView.$uploadImageFromURL
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] value in
@@ -97,6 +98,19 @@ private extension ImageUploadViewController {
                 .sink { [weak self] value in
                     guard let value else { return }
                     self?.contentView.setImage(value.image)
+                }
+                .store(in: &bindings)
+            
+            viewModel.$loadingState
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] value in
+                    guard let value else { return }
+                    switch value {
+                    case true:
+                        self?.contentView.startLoading()
+                    case false:
+                        self?.contentView.stopLoading()
+                    }
                 }
                 .store(in: &bindings)
         }

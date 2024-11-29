@@ -18,6 +18,7 @@ final class ImageUploadViewModel {
     //MARK: - Public properties
     
     @Published var image: ImageListCellDataModel?
+    @Published var loadingState: Bool?
     
 }
 
@@ -35,13 +36,16 @@ extension ImageUploadViewModel {
     //MARK: - Get image from url
     
     func getImageFromURL(_ url: String) {
+        loadingState = true
         ImageUploadService.getImageFromURL(url)
             .fetch()
             .receive(on: DispatchQueue.main)
-            .sink { _ in
+            .sink { [weak self] _ in
+                self?.loadingState = false
                 return
             } receiveValue: { [weak self] (value: ImageListCellDataModel) in
                 self?.image = value
+                self?.loadingState = false
             }
             .store(in: &bindings)
     }

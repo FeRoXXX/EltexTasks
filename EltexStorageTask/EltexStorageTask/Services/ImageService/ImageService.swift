@@ -31,11 +31,16 @@ extension ImageService {
                 .decode(type: T.self, decoder: JSONDecoder())
                 .eraseToAnyPublisher()
         case .getImageFromURL(let url):
-            return NetworkService.getSavedImageFromURL(url).fetch()
+            return NetworkService.getSavedImageFromURL(url).fetchWithProgress()
                 .tryMap({ data in
-                    guard let image = UIImage(data: data) else { throw ImageServiceError.decodingError }
-                    guard let imageType = ImageListCellDataModel(image: image) as? T else { throw ImageServiceError.decodingError }
-                    return imageType
+                    if let imageData = data.data {
+                        guard let image = UIImage(data: imageData) else { throw ImageServiceError.decodingError }
+                        guard let imageWithProgress = FetchResultDataModel(progress: 1.0, image: ImageListCellDataModel(image: image)) as? T else { throw ImageServiceError.decodingError }
+                        return imageWithProgress
+                    } else {
+                        guard let returnData = FetchResultDataModel(progress: data.progress, image: nil) as? T else { throw ImageServiceError.decodingError }
+                        return returnData
+                    }
                 })
                 .eraseToAnyPublisher()
         }
