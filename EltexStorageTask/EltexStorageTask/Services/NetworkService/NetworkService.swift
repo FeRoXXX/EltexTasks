@@ -22,6 +22,7 @@ enum NetworkService {
     case getImageMetadata
     case getSavedImageFromURL(URL)
     case getImageFromURL(String)
+    case sendImageToServer(Data)
     
     //MARK: - Private properties
     
@@ -86,6 +87,31 @@ extension NetworkService {
         case .getImageFromURL(let url):
             guard let requestURL = URL(string: url) else { return nil }
             return URLRequest(url: requestURL)
+        case .sendImageToServer(let data):
+            guard let requestURL = URL(string: "\(baseURL)/api/upload") else { return nil }
+            var request = URLRequest(url: requestURL)
+            request.httpMethod = "POST"
+            let boundary = UUID().uuidString
+            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+            let httpBody = createMultipartFormDataBody(image: data, imageName: boundary, boundary: boundary)
+            request.httpBody = httpBody
+            return request
         }
+    }
+    
+    //MARK: - Create form data
+    
+    private func createMultipartFormDataBody(image: Data, imageName: String, boundary: String) -> Data {
+        var body = Data()
+
+        let fileName = "\(imageName).jpg"
+        let mimeType = "image/jpeg"
+        body.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=files; filename=\"\(fileName)\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
+        body.append(image)
+        
+        body.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
+        return body
     }
 }

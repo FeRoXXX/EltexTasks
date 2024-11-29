@@ -70,7 +70,7 @@ private extension ImageUploadViewController {
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] value in
                     guard let value else { return }
-                    self?.contentView.setImage(value)
+                    self?.viewModel.prepareImage(imageData: ImageListCellDataModel(image: value))
                 }
                 .store(in: &bindings)
             
@@ -79,6 +79,13 @@ private extension ImageUploadViewController {
                 .sink { [weak self] value in
                     guard let value else { return }
                     self?.viewModel.getImageFromURL(value)
+                }
+                .store(in: &bindings)
+            
+            contentView.sendImageToServerPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] _ in
+                    self?.viewModel.sendImageToServer()
                 }
                 .store(in: &bindings)
         }
@@ -113,10 +120,23 @@ private extension ImageUploadViewController {
                     }
                 }
                 .store(in: &bindings)
+            
+            viewModel.onImageLoadToServer
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] _ in
+                    self?.navigateToPreviousScreen()
+                }
+                .store(in: &bindings)
         }
         
         bindViewModelToView()
         bindViewToViewModel()
+    }
+    
+    //MARK: - Navigation
+    
+    func navigateToPreviousScreen() {
+        navigationController?.popViewController(animated: true)
     }
     
     //MARK: - Configure image picker

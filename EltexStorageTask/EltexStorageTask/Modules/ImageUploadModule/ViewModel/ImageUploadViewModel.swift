@@ -13,6 +13,7 @@ final class ImageUploadViewModel {
     //MARK: - Private properties
     
     private(set) var uploadFromGalleryPublisher: PassthroughSubject<Void, Never> = .init()
+    private(set) var onImageLoadToServer: PassthroughSubject<Void, Never> = .init()
     private var bindings: Set<AnyCancellable> = []
     
     //MARK: - Public properties
@@ -44,8 +45,29 @@ extension ImageUploadViewModel {
                 self?.loadingState = false
                 return
             } receiveValue: { [weak self] (value: ImageListCellDataModel) in
-                self?.image = value
+                self?.prepareImage(imageData: value)
+            }
+            .store(in: &bindings)
+    }
+    
+    func prepareImage(imageData: ImageListCellDataModel) {
+        DispatchQueue.global().async { [weak self] in
+            guard let image = imageData.image.compressedImage() else { return }
+            DispatchQueue.main.async {
+                self?.image = ImageListCellDataModel(image: image)
                 self?.loadingState = false
+            }
+        }
+    }
+    
+    func sendImageToServer() {
+        guard let data = image?.image.jpegData(compressionQuality: 1.0) else { return }
+        ImageUploadService.sendImageToServer(data).fetch()
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
+                return
+            } receiveValue: { [weak self] (value: ImageList) in
+                self?.onImageLoadToServer.send()
             }
             .store(in: &bindings)
     }

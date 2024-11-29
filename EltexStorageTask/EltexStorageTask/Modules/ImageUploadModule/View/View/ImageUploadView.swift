@@ -14,6 +14,7 @@ final class ImageUploadView: UIView {
     //MARK: - Private properties
     
     private(set) var openPickerPublisher: PassthroughSubject<Void, Never> = .init()
+    private(set) var sendImageToServerPublisher: PassthroughSubject<Void, Never> = .init()
     
     private var previewImageView: UIImageView = {
         let imageView = UIImageView()
@@ -62,7 +63,7 @@ final class ImageUploadView: UIView {
         return button
     }()
     
-    private var sendToServerButton: UIButton = {
+    private lazy var sendToServerButton: UIButton = {
         let button = UIButton()
         button.isEnabled = false
         var configuration = UIButton.Configuration.filled()
@@ -70,6 +71,7 @@ final class ImageUploadView: UIView {
         configuration.background.backgroundColor = .systemBlue
         configuration.background.cornerRadius = 12
         button.configuration = configuration
+        button.addTarget(self, action: #selector(sendImageToServer), for: .touchUpInside)
         return button
     }()
     
@@ -153,6 +155,10 @@ private extension ImageUploadView {
     
     @objc func uploadFromURL() {
         uploadImageFromURL = urlTextField.text
+    }
+    
+    @objc func sendImageToServer() {
+        sendImageToServerPublisher.send()
     }
 }
 

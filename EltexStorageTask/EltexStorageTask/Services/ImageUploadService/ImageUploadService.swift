@@ -16,6 +16,7 @@ enum ImageUploadServiceError: Error {
 
 enum ImageUploadService {
     case getImageFromURL(String)
+    case sendImageToServer(Data)
 }
 
 extension ImageUploadService {
@@ -32,6 +33,10 @@ extension ImageUploadService {
                     guard let imageType = ImageListCellDataModel(image: image) as? T else { throw ImageServiceError.decodingError }
                     return imageType
                 })
+                .eraseToAnyPublisher()
+        case .sendImageToServer(let data):
+            return NetworkService.sendImageToServer(data).fetch()
+                .decode(type: T.self, decoder: JSONDecoder())
                 .eraseToAnyPublisher()
         }
     }

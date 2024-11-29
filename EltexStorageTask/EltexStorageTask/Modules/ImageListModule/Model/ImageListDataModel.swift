@@ -38,9 +38,9 @@ struct ImageListDataModel: Codable {
 
 struct Formats: Codable {
     let large: Large?
-    let small: Large
+    let small: Large?
     let medium: Large?
-    let thumbnail: Large
+    let thumbnail: Large?
 }
 
 // MARK: - Large
