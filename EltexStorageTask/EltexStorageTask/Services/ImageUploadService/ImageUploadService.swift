@@ -1,8 +1,8 @@
 //
-//  ImageService.swift
+//  ImageUploadService.swift
 //  EltexStorageTask
 //
-//  Created by Александр Федоткин on 27.11.2024.
+//  Created by Александр Федоткин on 29.11.2024.
 //
 
 import UIKit
@@ -10,28 +10,23 @@ import Combine
 
 //MARK: - Service errors
 
-enum ImageServiceError: Error {
+enum ImageUploadServiceError: Error {
     case decodingError
 }
 
-enum ImageService {
-    case getImageList
-    case getImageFromURL(url: URL)
+enum ImageUploadService {
+    case getImageFromURL(String)
 }
 
-extension ImageService {
+extension ImageUploadService {
     
     //MARK: - Decoding function
     
     func fetch<T: Codable>() -> AnyPublisher<T, Error> {
         
         switch self {
-        case .getImageList:
-            return NetworkService.getImageMetadata.fetch()
-                .decode(type: T.self, decoder: JSONDecoder())
-                .eraseToAnyPublisher()
         case .getImageFromURL(let url):
-            return NetworkService.getSavedImageFromURL(url).fetch()
+            return NetworkService.getImageFromURL(url).fetch()
                 .tryMap({ data in
                     guard let image = UIImage(data: data) else { throw ImageServiceError.decodingError }
                     guard let imageType = ImageListCellDataModel(image: image) as? T else { throw ImageServiceError.decodingError }

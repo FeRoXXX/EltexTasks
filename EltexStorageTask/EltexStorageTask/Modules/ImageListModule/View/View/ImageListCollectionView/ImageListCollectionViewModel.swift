@@ -10,15 +10,22 @@ import Combine
 
 final class ImageListCollectionViewModel {
     
-    @Published var currentCellImage: ImageListCellDataModel?
-    
+    //MARK: - Private properties
     
     private var url: String
     private var bindings: Set<AnyCancellable> = []
     
+    //MARK: - Public properties
+    
+    @Published var currentCellImage: ImageListCellDataModel?
+    
+    //MARK: - Initialization
+    
     init(url: String) {
         self.url = url
     }
+    
+    //MARK: - Fetch function
     
     func fetch() {
         guard let url = URL(string: url) else { return }

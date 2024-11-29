@@ -20,7 +20,8 @@ enum NetworkError: Error {
 
 enum NetworkService {
     case getImageMetadata
-    case getImageFromURL(URL)
+    case getSavedImageFromURL(URL)
+    case getImageFromURL(String)
     
     //MARK: - Private properties
     
@@ -74,11 +75,12 @@ extension NetworkService {
         case .getImageMetadata:
             guard let requestURL = URL(string: "\(baseURL)/api/upload/files") else { return nil }
             return URLRequest(url: requestURL)
-        case .getImageFromURL(let url):
+        case .getSavedImageFromURL(let url):
             guard let requestURL = URL(string: "\(baseURL)/uploads/\(url.lastPathComponent)") else { return nil }
+            return URLRequest(url: requestURL)
+        case .getImageFromURL(let url):
+            guard let requestURL = URL(string: url) else { return nil }
             return URLRequest(url: requestURL)
         }
     }
-    
-    
 }

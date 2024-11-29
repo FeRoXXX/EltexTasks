@@ -105,7 +105,7 @@ private extension ImageListViewController {
     func navigateTo(_ window: NavigationControllers) {
         switch window {
         case .addImage:
-            navigationController?.pushViewController(ImageListModuleAssembly.build(), animated: true)
+            navigationController?.pushViewController(ImageUploadModuleAssembly.build(), animated: true)
         case .none:
             return
         }
