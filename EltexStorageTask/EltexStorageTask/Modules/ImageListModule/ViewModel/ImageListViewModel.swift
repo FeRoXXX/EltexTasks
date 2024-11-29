@@ -15,19 +15,19 @@ enum NavigationControllers {
 
 final class ImageListViewModel {
     
-    @Published var data: ImageList?
-    @Published var navigate: NavigationControllers = .none
+    //MARK: - Private properties
     
     private var bindings: Set<AnyCancellable> = []
     
-    init() {
-        fetchFirstOpenData()
-    }
+    //MARK: - Public properties
+    
+    @Published var data: ImageList?
+    @Published var navigate: NavigationControllers = .none
 }
 
-//MARK: - Private extension
+//MARK: - Public extension
 
-private extension ImageListViewModel {
+extension ImageListViewModel {
     
     //MARK: - First open data
     

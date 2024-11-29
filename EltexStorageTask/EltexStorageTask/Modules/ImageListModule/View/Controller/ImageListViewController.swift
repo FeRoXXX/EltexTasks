@@ -13,6 +13,7 @@ final class ImageListViewController: UIViewController {
     //MARK: - Private properties
     
     private(set) var addImageButtonTapped: PassthroughSubject<Void, Never> = .init()
+    private(set) var firstOpenPublisher: PassthroughSubject<Void, Never> = .init()
     private let contentView = ImageListView()
     private let viewModel: ImageListViewModel
     private var bindings: Set<AnyCancellable> = []
@@ -24,6 +25,11 @@ final class ImageListViewController: UIViewController {
         setupUI()
         configureNavigationBar()
         bind()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        firstOpenPublisher.send()
     }
     
     //MARK: - Initialization
@@ -60,6 +66,12 @@ private extension ImageListViewController {
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] _ in
                     self?.viewModel.navigate = .addImage
+                }
+                .store(in: &bindings)
+            firstOpenPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] _ in
+                    self?.viewModel.fetchFirstOpenData()
                 }
                 .store(in: &bindings)
         }

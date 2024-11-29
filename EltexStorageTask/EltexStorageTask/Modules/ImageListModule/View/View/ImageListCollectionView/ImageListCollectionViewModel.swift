@@ -24,12 +24,14 @@ final class ImageListCollectionViewModel {
     
     init(url: String) {
         self.url = url
+        checkImageInCache()
     }
     
     //MARK: - Fetch function
     
     func fetch() {
         guard let url = URL(string: url) else { return }
+        
         ImageService.getImageFromURL(url: url)
             .fetch()
             .receive(on: DispatchQueue.main)
@@ -43,5 +45,14 @@ final class ImageListCollectionViewModel {
                 }
             }
             .store(in: &bindings)
+    }
+    
+    //MARK: - Check image in cache
+    func checkImageInCache() {
+        guard let url = URL(string: url) else { return }
+        
+        if let image = ImageCacheService.shared.getCachedImage(for: url) {
+            self.currentCellImage = ImageListCellDataModel(image: image)
+        }
     }
 }

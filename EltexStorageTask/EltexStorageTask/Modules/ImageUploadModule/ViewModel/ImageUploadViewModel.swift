@@ -23,6 +23,20 @@ final class ImageUploadViewModel {
     
 }
 
+//MARK: - Private properties
+
+private extension ImageUploadViewModel {
+    
+    //MARK: - Save image to cache function
+    
+    func cacheImage(url: URL? = nil) {
+        guard let url,
+            let image else { return }
+        
+        ImageCacheService.shared.setCachedImage(image.image, for: url)
+    }
+}
+
 //MARK: - Public extension
 
 extension ImageUploadViewModel {
@@ -50,7 +64,7 @@ extension ImageUploadViewModel {
             .store(in: &bindings)
     }
     
-    func prepareImage(imageData: ImageListCellDataModel) {
+    func prepareImage(imageData: ImageListCellDataModel, url: URL? = nil) {
         DispatchQueue.global().async { [weak self] in
             guard let image = imageData.image.compressedImage() else { return }
             DispatchQueue.main.async {
@@ -67,6 +81,9 @@ extension ImageUploadViewModel {
             .sink { _ in
                 return
             } receiveValue: { [weak self] (value: ImageList) in
+                if let data = value.first {
+                    self?.cacheImage(url: URL(string: data.url))
+                }
                 self?.onImageLoadToServer.send()
             }
             .store(in: &bindings)
