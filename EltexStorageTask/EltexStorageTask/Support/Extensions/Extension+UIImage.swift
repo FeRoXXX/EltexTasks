@@ -11,14 +11,14 @@ extension UIImage {
     
     //MARK: - Image compression method
     
-    func compressedImage() -> UIImage? {
+    func compressedImage() -> (UIImage?, Data)? {
         let targetSize = 1 * 1024 * 1024
         
         var compression: CGFloat = 1.0
         guard var imageData = self.jpegData(compressionQuality: compression) else { return nil }
         
         if imageData.count <= targetSize {
-            return UIImage(data: imageData)
+            return (UIImage(data: imageData), imageData)
         }
         
         while imageData.count > targetSize && compression > 0.1 {
@@ -27,6 +27,6 @@ extension UIImage {
                 imageData = compressedData
             }
         }
-        return UIImage(data: imageData)
+        return (UIImage(data: imageData), imageData)
     }
 }

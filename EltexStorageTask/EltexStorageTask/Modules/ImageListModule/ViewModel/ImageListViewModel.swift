@@ -34,11 +34,25 @@ private extension ImageListViewModel {
     //MARK: - Append new data
     
     func appendNewData(newData: ImageList) {
-        let startIndex: Int = data?.count ?? 0
-        data = newData
-        let endIndex: Int = data?.count ?? 0
-        let indexPath = (startIndex..<endIndex).map { IndexPath(row: $0, section: 0) }
-        newDataPublisher.send(indexPath)
+        guard let existingData = data else {
+                self.data = newData
+                let indexes = newData.indices.map { IndexPath(row: $0, section: 0) }
+                newDataPublisher.send(indexes)
+                return
+            }
+            
+            var indexes: [IndexPath] = []
+            var updatedData = existingData
+
+            for (index, newElement) in newData.enumerated() {
+                if index >= existingData.count || newElement != existingData[index] {
+                    indexes.append(IndexPath(row: index, section: 0))
+                    updatedData.insert(newElement, at: index)
+                }
+            }
+
+            self.data = updatedData
+            newDataPublisher.send(indexes)
     }
     
     //MARK: - Delete cell

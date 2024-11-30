@@ -22,6 +22,7 @@ final class ImageUploadViewModel {
     private(set) var uploadFromGalleryPublisher: PassthroughSubject<Void, Never> = .init()
     private(set) var onImageLoadToServer: PassthroughSubject<Void, Never> = .init()
     private var bindings: Set<AnyCancellable> = []
+    private var compressedImage: Data?
     
     //MARK: - Public properties
     
@@ -62,8 +63,13 @@ extension ImageUploadViewModel {
         ImageUploadService.getImageFromURL(url)
             .fetch()
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                self?.loadingState = .none
+            .sink { [weak self] value in
+                switch value {
+                case .finished:
+                    return
+                default:
+                    self?.loadingState = .none
+                }
                 return
             } receiveValue: { [weak self] (value: ImageListCellDataModel) in
                 DispatchQueue.main.async {
@@ -78,8 +84,10 @@ extension ImageUploadViewModel {
     
     func prepareImage(imageData: ImageListCellDataModel, url: URL? = nil) {
         DispatchQueue.global().async { [weak self] in
-            guard let image = imageData.image.compressedImage() else { return }
+            guard let imageAndData = imageData.image.compressedImage(),
+                  let image = imageAndData.0 else { return }
             DispatchQueue.main.async {
+                self?.compressedImage = imageAndData.1
                 self?.image = ImageListCellDataModel(image: image)
                 self?.loadingState = .none
             }
@@ -89,7 +97,7 @@ extension ImageUploadViewModel {
     //MARK: - Send image to server
     
     func sendImageToServer() {
-        guard let data = image?.image.jpegData(compressionQuality: 1.0) else { return }
+        guard let data = compressedImage else { return }
         loadingState = .sendToServer
         ImageUploadService.sendImageToServer(data).fetch()
             .receive(on: DispatchQueue.main)
