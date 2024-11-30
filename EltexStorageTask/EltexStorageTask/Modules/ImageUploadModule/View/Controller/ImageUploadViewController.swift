@@ -111,11 +111,14 @@ private extension ImageUploadViewController {
             viewModel.$loadingState
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] value in
-                    guard let value else { return }
                     switch value {
-                    case true:
-                        self?.contentView.startLoading()
-                    case false:
+                    case .downloading:
+                        self?.contentView.startLoading(value.rawValue)
+                    case .optimization:
+                        self?.contentView.startLoading(value.rawValue)
+                    case .sendToServer:
+                        self?.contentView.startLoading(value.rawValue)
+                    case .none:
                         self?.contentView.stopLoading()
                     }
                 }

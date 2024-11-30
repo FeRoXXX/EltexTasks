@@ -17,12 +17,40 @@ final class ImageListViewModel {
     
     //MARK: - Private properties
     
+    private(set) var newDataPublisher: PassthroughSubject<[IndexPath], Never> = .init()
+    private(set) var deleteDataPublisher: PassthroughSubject<[IndexPath], Never> = .init()
     private var bindings: Set<AnyCancellable> = []
     
     //MARK: - Public properties
     
-    @Published var data: ImageList?
+    @Published var data: ImageList? = []
     @Published var navigate: NavigationControllers = .none
+}
+
+//MARK: - Private extension
+
+private extension ImageListViewModel {
+    
+    //MARK: - Append new data
+    
+    func appendNewData(newData: ImageList) {
+        let startIndex: Int = data?.count ?? 0
+        data = newData
+        let endIndex: Int = data?.count ?? 0
+        let indexPath = (startIndex..<endIndex).map { IndexPath(row: $0, section: 0) }
+        newDataPublisher.send(indexPath)
+    }
+    
+    //MARK: - Delete cell
+    
+    func deleteCell(newData: ImageList) {
+        guard let data else { return }
+        let indexes = data.enumerated().compactMap { index, element in
+            newData.contains(element) ? nil : IndexPath(row: index, section: 0)
+        }
+        self.data = newData
+        deleteDataPublisher.send(indexes)
+    }
 }
 
 //MARK: - Public extension
@@ -36,7 +64,11 @@ extension ImageListViewModel {
             .sink { _ in
                 return
             } receiveValue: { [weak self] (completion: ImageList) in
-                self?.data = completion
+                if completion.count > self?.data?.count ?? 0 {
+                    self?.appendNewData(newData: completion)
+                } else {
+                    self?.deleteCell(newData: completion)
+                }
             }
             .store(in: &bindings)
     }

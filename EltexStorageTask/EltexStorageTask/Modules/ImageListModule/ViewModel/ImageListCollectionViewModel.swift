@@ -40,6 +40,7 @@ final class ImageListCollectionViewModel {
             } receiveValue: { [weak self] (value: FetchResultDataModel) in
                 if let value = value.image {
                     self?.currentCellImage = value
+                    self?.saveImageToCache(image: value)
                 } else {
                     self?.progress = value.progress
                 }
@@ -48,11 +49,23 @@ final class ImageListCollectionViewModel {
     }
     
     //MARK: - Check image in cache
+    
     func checkImageInCache() {
         guard let url = URL(string: url) else { return }
-        
         if let image = ImageCacheService.shared.getCachedImage(for: url) {
             self.currentCellImage = ImageListCellDataModel(image: image)
         }
+    }
+}
+
+//MARK: - Private extension
+
+private extension ImageListCollectionViewModel {
+    
+    //MARK: - Save image to cache
+    
+    func saveImageToCache(image: ImageListCellDataModel) {
+        guard let url = URL(string: url) else { return }
+        ImageCacheService.shared.setCachedImage(image.image, for: url)
     }
 }

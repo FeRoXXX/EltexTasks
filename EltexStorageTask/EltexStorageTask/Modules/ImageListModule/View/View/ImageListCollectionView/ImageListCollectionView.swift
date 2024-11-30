@@ -10,9 +10,13 @@ import Combine
 
 final class ImageListCollectionView: UICollectionView {
     
-    var data: [String] = []
+    //MARK: - Private properties
     
     private var bindings: Set<AnyCancellable> = []
+    
+    //MARK: - Public properties
+    
+    var data: [String] = []
     
     //MARK: - Initialization
     

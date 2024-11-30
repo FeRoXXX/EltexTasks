@@ -14,7 +14,7 @@ final class URLSessionProvider: NSObject {
     
     private var progressSubject = PassthroughSubject<(Double, Data?), Error>()
     
-    private lazy var urlSession: URLSession = {
+    private lazy var urlSession: URLSession = { [weak self] in
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = 10
         configuration.httpAdditionalHeaders = [

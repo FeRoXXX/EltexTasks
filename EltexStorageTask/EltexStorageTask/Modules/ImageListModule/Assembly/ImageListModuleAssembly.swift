@@ -8,6 +8,9 @@
 import UIKit
 
 final class ImageListModuleAssembly {
+    
+    //MARK: - Build view controller function
+    
     static func build() -> UIViewController {
         let viewModel = ImageListViewModel()
         let controller = ImageListViewController(viewModel: viewModel)

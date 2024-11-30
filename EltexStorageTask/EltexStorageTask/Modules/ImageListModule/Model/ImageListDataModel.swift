@@ -11,7 +11,7 @@ typealias ImageList = [ImageListDataModel]
 
 //MARK: - ImageListDataModel
 
-struct ImageListDataModel: Codable {
+struct ImageListDataModel: Codable, Equatable {
     let id: Int
     let name: String
     let alternativeText, caption: String?
@@ -32,11 +32,12 @@ struct ImageListDataModel: Codable {
         case providerMetadata = "provider_metadata"
         case createdAt, updatedAt
     }
+    
 }
 
 // MARK: - Formats
 
-struct Formats: Codable {
+struct Formats: Codable, Equatable {
     let large: Large?
     let small: Large?
     let medium: Large?
@@ -45,7 +46,7 @@ struct Formats: Codable {
 
 // MARK: - Large
 
-struct Large: Codable {
+struct Large: Codable, Equatable {
     let ext, url, hash, mime: String
     let name: String
     let path: String?

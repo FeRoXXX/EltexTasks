@@ -8,6 +8,13 @@
 import Foundation
 import Combine
 
+enum loaderStatus: String {
+    case downloading = "Скачивание..."
+    case optimization = "Оптимизация..."
+    case sendToServer = "Отправка на сервер"
+    case none
+}
+
 final class ImageUploadViewModel {
     
     //MARK: - Private properties
@@ -19,7 +26,7 @@ final class ImageUploadViewModel {
     //MARK: - Public properties
     
     @Published var image: ImageListCellDataModel?
-    @Published var loadingState: Bool?
+    @Published var loadingState: loaderStatus = .none
     
 }
 
@@ -51,36 +58,45 @@ extension ImageUploadViewModel {
     //MARK: - Get image from url
     
     func getImageFromURL(_ url: String) {
-        loadingState = true
+        loadingState = .downloading
         ImageUploadService.getImageFromURL(url)
             .fetch()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
-                self?.loadingState = false
+                self?.loadingState = .none
                 return
             } receiveValue: { [weak self] (value: ImageListCellDataModel) in
+                DispatchQueue.main.async {
+                    self?.loadingState = .optimization
+                }
                 self?.prepareImage(imageData: value)
             }
             .store(in: &bindings)
     }
+    
+    //MARK: - Image optimization functions
     
     func prepareImage(imageData: ImageListCellDataModel, url: URL? = nil) {
         DispatchQueue.global().async { [weak self] in
             guard let image = imageData.image.compressedImage() else { return }
             DispatchQueue.main.async {
                 self?.image = ImageListCellDataModel(image: image)
-                self?.loadingState = false
+                self?.loadingState = .none
             }
         }
     }
     
+    //MARK: - Send image to server
+    
     func sendImageToServer() {
         guard let data = image?.image.jpegData(compressionQuality: 1.0) else { return }
+        loadingState = .sendToServer
         ImageUploadService.sendImageToServer(data).fetch()
             .receive(on: DispatchQueue.main)
             .sink { _ in
                 return
             } receiveValue: { [weak self] (value: ImageList) in
+                self?.loadingState = .none
                 if let data = value.first {
                     self?.cacheImage(url: URL(string: data.url))
                 }

@@ -28,6 +28,12 @@ final class ImageUploadView: UIView {
         return activityIndicatorView
     }()
     
+    private var statusTextLabel: UILabel = {
+        let statusLabel = UILabel()
+        statusLabel.isHidden = true
+        return statusLabel
+    }()
+    
     private var urlTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Введите URL"
@@ -110,6 +116,7 @@ private extension ImageUploadView {
         addSubview(spinLoader)
         addSubview(urlTextField)
         addSubview(verticalStackView)
+        addSubview(statusTextLabel)
     }
     
     func setupConstraints() {
@@ -120,6 +127,11 @@ private extension ImageUploadView {
         
         spinLoader.snp.makeConstraints { make in
             make.center.equalTo(previewImageView.snp.center)
+        }
+        
+        statusTextLabel.snp.makeConstraints { make in
+            make.centerX.equalTo(spinLoader.snp.centerX)
+            make.centerY.equalTo(spinLoader.snp.top).inset(-10)
         }
         
         urlTextField.snp.makeConstraints { make in
@@ -175,8 +187,11 @@ extension ImageUploadView {
     
     //MARK: - Start loading animation
     
-    func startLoading() {
+    func startLoading(_ text: String) {
+        previewImageView.image = nil
         spinLoader.isHidden = false
+        statusTextLabel.isHidden = false
+        statusTextLabel.text = text
         spinLoader.startAnimating()
     }
     
@@ -184,6 +199,7 @@ extension ImageUploadView {
     
     func stopLoading() {
         spinLoader.stopAnimating()
+        statusTextLabel.isHidden = true
         spinLoader.isHidden = true
     }
 }

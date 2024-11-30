@@ -85,7 +85,6 @@ private extension ImageListViewController {
                 .sink { [weak self] value in
                     guard let value else { return }
                     self?.contentView.imageListCollectionView.data = value.map { return $0.url }
-                    self?.contentView.imageListCollectionView.reloadData()
                 }
                 .store(in: &bindings)
             
@@ -93,6 +92,24 @@ private extension ImageListViewController {
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] value in
                     self?.navigateTo(value)
+                }
+                .store(in: &bindings)
+            
+            viewModel.newDataPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] value in
+                    self?.contentView.imageListCollectionView.performBatchUpdates ({
+                        self?.contentView.imageListCollectionView.insertItems(at: value)
+                    })
+                }
+                .store(in: &bindings)
+            
+            viewModel.deleteDataPublisher
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] value in
+                    self?.contentView.imageListCollectionView.performBatchUpdates({
+                        self?.contentView.imageListCollectionView.deleteItems(at: value)
+                    })
                 }
                 .store(in: &bindings)
         }
